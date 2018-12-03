@@ -1,23 +1,36 @@
 import numpy as np
-import csv
 import pandas
 
-def readDocument(documentName, columnName, nrows=10):
-    df = pandas.read_csv(documentName, nrows=nrows)
+documentName = 'training_dataset.csv'
+totalRowClass = np.zeros(3)
+
+def readDocument(documentName, columnName = "none"):
+    df = pandas.read_csv(documentName)
     if(columnName == "none"):
         return df
     else:
         return df[columnName]
 
-def writeDocument(documentName):
-    df = pandas.DataFrame.to_csv(documentName)
-    print(df)
+def getDocumentTotalRows(documentName):
+    doc = readDocument(documentName)
+    count = doc.index
+    return len(count)
 
-df = pandas.read_csv('training_dataset.csv')
-count = df.index
+def getRows(partOfDocument):
+    count = partOfDocument.index
+    return len(count)
 
-print(len(count)
+document = readDocument(documentName)
+print('CSV ' , document)
 
-document = readDocument('training_dataset.csv', "none")
-print(document)
+totalRows = getDocumentTotalRows(documentName)
+print('Total row', totalRows)
 
+for i in range(0, 3):
+    print("Nilai i", i)
+    totalRowClass[i] = getRows(document.loc[document['label'] == i])
+
+print('Total row every class ' , totalRowClass)
+
+rowsOfPartDoc = getRows(document.loc[document['label'] == 0])
+print(rowsOfPartDoc)
