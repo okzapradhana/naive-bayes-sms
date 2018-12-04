@@ -1,15 +1,14 @@
 import numpy as np
 import pandas
 
+#Variable initialization
 documentName = 'training_dataset.csv'
 totalRowClass = np.zeros(3)
 
-def readDocument(documentName, columnName = "none"):
+#Method for Document Parsing
+def readDocument(documentName):
     df = pandas.read_csv(documentName)
-    if(columnName == "none"):
-        return df
-    else:
-        return df[columnName]
+    return df
 
 def getDocumentTotalRows(documentName):
     doc = readDocument(documentName)
@@ -20,17 +19,23 @@ def getRows(partOfDocument):
     count = partOfDocument.index
     return len(count)
 
+def getRowOfEveryClass(totalRowClass):
+    for i in range(len(totalRowClass)):
+        totalRowClass[i] = getRows(document[document['label'] == i])
+    return totalRowClass
+
+#Read Document
 document = readDocument(documentName)
-print('CSV ' , document)
 
-totalRows = getDocumentTotalRows(documentName)
-print('Total row', totalRows)
+#Print Total Rows for Every class
+print('Total row every class ' , getRowOfEveryClass(totalRowClass))
 
-for i in range(0, 3):
-    print("Nilai i", i)
-    totalRowClass[i] = getRows(document.loc[document['label'] == i])
+#Get 80% of document of each Class
+docClass0 = document[document['label'] == 0]
+print(docClass0[: (int(getRowOfEveryClass(totalRowClass)[0] * 0.8) ) ])
 
-print('Total row every class ' , totalRowClass)
+docClass1 = document[document['label'] == 1]
+print(docClass1[: (int(getRowOfEveryClass(totalRowClass)[1] * 0.8) ) ])
 
-rowsOfPartDoc = getRows(document.loc[document['label'] == 0])
-print(rowsOfPartDoc)
+docClass2 = document[document['label'] == 2]
+print(docClass2[: (int(getRowOfEveryClass(totalRowClass)[2] * 0.8) ) ])        
