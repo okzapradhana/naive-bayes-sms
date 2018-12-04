@@ -34,27 +34,29 @@ docClass1 = document[document['label'] == 1]
 docClass2 = document[document['label'] == 2]
 
 #Create document with 20% of each class for Data Testing
-docClass0_20 = docClass0[-(int(getRowOfEveryClass(totalRowClass, document)[0] * 0.2) ) :  ]
-docClass1_20 = docClass1[-(int(getRowOfEveryClass(totalRowClass, document)[0] * 0.2) ) :  ]
-docClass2_20 = docClass2[-(int(getRowOfEveryClass(totalRowClass, document)[0] * 0.2) ) :  ]
+docTest0 = docClass0[-(int(getRowOfEveryClass(totalRowClass, document)[0] * 0.2) ) :  ]
+docTest1 = docClass1[-(int(getRowOfEveryClass(totalRowClass, document)[1] * 0.2) ) :  ]
+docTest2 = docClass2[-(int(getRowOfEveryClass(totalRowClass, document)[2] * 0.2) ) :  ]
 
 
 #Create document with 80% of each class
-docClass0_80 = docClass0[ : (int(getRowOfEveryClass(totalRowClass, document)[0] * 0.8) ) ]
-docClass1_80 = docClass1[ : (int(getRowOfEveryClass(totalRowClass, document)[1] * 0.8) ) ]
-docClass2_80 = docClass2[ : (int(getRowOfEveryClass(totalRowClass, document)[2] * 0.8) ) ]
+docTraining0 = docClass0[ : (int(getRowOfEveryClass(totalRowClass, document)[0] * 0.8) ) ]
+docTraining1 = docClass1[ : (int(getRowOfEveryClass(totalRowClass, document)[1] * 0.8) ) ]
+docTraining2 = docClass2[ : (int(getRowOfEveryClass(totalRowClass, document)[2] * 0.8) ) ]
 
 #Data Training Document
-docTraining = pandas.concat([docClass2_80, docClass1_80, docClass0_80])
+docTraining = pandas.concat([docTraining2, docTraining1, docTraining0])
 docTraining.to_csv("data_training.csv")
 
 print('\nTraining Document', docTraining)
 
+print()
 #Data Testing Document
-docClass0_20.to_csv("datauji_0.csv")
-docClass1_20.to_csv("datauji_1.csv")
-docClass2_20.to_csv("datauji_2.csv")
+docTesting = pandas.concat([docTest2, docTest1, docTest0])
+docTesting.to_csv("data_testing.csv")
+
+print('\nTesting Document', docTesting)
 
 #Lowercase
 #print(docClass0_20['Teks'].str.lower())
-print('Test', docClass0_20[docClass0_20['Teks'].str.contains('([a-zA-Z]+)', regex=True)])
+#print('Test', docTest0[docTest0['Teks'].str.contains('([a-zA-Z]+)', regex=True)])
