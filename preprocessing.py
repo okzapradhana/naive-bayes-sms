@@ -19,6 +19,9 @@ def getRowOfEveryClass(totalRowClass, document):
         totalRowClass[i] = getRows(document[document['label'] == i])
     return totalRowClass
 
+def lowerCaseDocument(documentName):
+    return documentName.str.lower()
+
 #Read Document
 document = readDocument(documentName)
 
@@ -51,3 +54,7 @@ print('\nTraining Document', docTraining)
 docClass0_20.to_csv("datauji_0.csv")
 docClass1_20.to_csv("datauji_1.csv")
 docClass2_20.to_csv("datauji_2.csv")
+
+#Lowercase
+#print(docClass0_20['Teks'].str.lower())
+print('Test', docClass0_20[docClass0_20['Teks'].str.contains('([a-zA-Z]+)', regex=True)])
