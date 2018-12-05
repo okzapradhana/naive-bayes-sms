@@ -69,6 +69,10 @@ print('\nCase Folding\n', docTesting)
 docTesting = docTesting.str.replace('[.()]','')
 print('\nCleansing\n', docTesting)
 
+#Tokenizing
+docTesting = docTesting.str.split()
+print('\nTokenizing\n', docTesting)
+
 #Stemming
 #for i in range(getRows(docTesting)):
  #   stemmingResult = docTesting.iloc[i]
