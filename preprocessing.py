@@ -1,10 +1,15 @@
 import numpy as np
 import pandas
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 
 #Stemmer
 factory = StemmerFactory()
 stemmer = factory.create_stemmer()
+
+#Filter
+factory = StopWordRemoverFactory()
+stopword = factory.create_stop_word_remover()
 
 #Variable initialization
 documentName = 'dataset_sms_ori.csv'
@@ -69,12 +74,18 @@ print('\nCase Folding\n', docTesting)
 docTesting = docTesting.str.replace('[.()]','')
 print('\nCleansing\n', docTesting)
 
-#Tokenizing
-docTesting = docTesting.str.split()
-print('\nTokenizing\n', docTesting)
+#Filtering
+for j in range(getRows(docTesting)):
+    filteringResult = docTesting.iloc[j]
+    output1 = stopword.remove(filteringResult)
+    print('\nFiltering\n', output1)
 
 #Stemming
 for i in range(getRows(docTesting)):
     stemmingResult = docTesting.iloc[i]
     output   = stemmer.stem(stemmingResult)
     print('\nStemming\n', output)
+
+#Tokenizing
+docTesting = docTesting.str.split()
+print('\nTokenizing\n', docTesting)
