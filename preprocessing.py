@@ -1,7 +1,10 @@
 import numpy as np
 import pandas
-import string
-import re
+from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
+
+#Stemmer
+factory = StemmerFactory()
+stemmer = factory.create_stemmer()
 
 #Variable initialization
 documentName = 'dataset_sms_ori.csv'
@@ -63,5 +66,11 @@ docTesting = docTesting['Teks'].str.lower()
 print('\nCase Folding\n', docTesting)
 
 #Cleansing
-docTesting= docTesting.str.replace('[.()]','')
+docTesting = docTesting.str.replace('[.()]','')
 print('\nCleansing\n', docTesting)
+
+#Stemming
+for i in range(getRows(docTesting)):
+    stemmingResult = docTesting.iloc[i]
+    output   = stemmer.stem(stemmingResult)
+    print('\nStemming\n', output)
