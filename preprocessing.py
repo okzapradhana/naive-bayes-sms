@@ -73,14 +73,18 @@ print('\nCleansing\n', docTesting)
 
 stemmingDocument = []
 
-#Stemming
-for i in range(getRows(docTesting)):
-    stemmingResult = docTesting.iloc[i]
-    output   = pandas.DataFrame([stemmer.stem(stemmingResult)])
-    stemmingDocument.append(output)
-    print(stemmingDocument)
+#Tokenizing
+docTesting = docTesting.str.split()
+print('\nTokenizing\n', docTesting)
 
-print('Stemming result', len(stemmingDocument))
+#Stemming
+#for i in range(getRows(docTesting)):
+#    stemmingResult = docTesting.iloc[i]
+#    output   = pandas.DataFrame([stemmer.stem(stemmingResult)])
+#    stemmingDocument.append(output)
+#    print(stemmingDocument)
+
+#print('Stemming result', len(stemmingDocument))
 
 
 #print('Concat', pandas.concat([docTesting, docTestingLabel], axis=1))
