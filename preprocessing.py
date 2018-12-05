@@ -109,7 +109,7 @@ for j in range(getRows(docTesting)):
     output1 = stopword.remove(filteringResult)
     print('\nFiltering\n', output1)
 
-docTesting.to_csv("test_prep.csv")
+
 #Stemming
 #for i in range(getRows(docTesting)):
  #   stemmingResult = docTesting.iloc[i]
@@ -117,5 +117,7 @@ docTesting.to_csv("test_prep.csv")
  #   print('\nStemming\n', output)
 
 #Tokenizing
-#docTesting = docTesting.str.split()
-#print('\nTokenizing\n', docTesting)
+docTesting = docTesting.str.split()
+print('\nTokenizing\n', docTesting)
+
+docTesting.to_csv("test_prep.csv")
