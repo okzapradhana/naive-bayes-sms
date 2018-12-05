@@ -70,7 +70,7 @@ docTesting = docTesting.str.replace('[.()]','')
 print('\nCleansing\n', docTesting)
 
 #Stemming
-for i in range(getRows(docTesting)):
-    stemmingResult = docTesting.iloc[i]
-    output   = stemmer.stem(stemmingResult)
-    print('\nStemming\n', output)
+#for i in range(getRows(docTesting)):
+ #   stemmingResult = docTesting.iloc[i]
+ #   output   = stemmer.stem(stemmingResult)
+ #   print('\nStemming\n', output)
