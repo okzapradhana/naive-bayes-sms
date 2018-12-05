@@ -1,5 +1,7 @@
 import numpy as np
 import pandas
+import string
+import re
 
 #Variable initialization
 documentName = 'dataset_sms_ori.csv'
@@ -50,13 +52,16 @@ docTraining.to_csv("data_training.csv")
 
 print('\nTraining Document', docTraining)
 
-print()
 #Data Testing Document
 docTesting = pandas.concat([docTest2, docTest1, docTest0])
 docTesting.to_csv("data_testing.csv")
 
 print('\nTesting Document', docTesting)
 
-#Lowercase
-#print(docClass0_20['Teks'].str.lower())
-#print('Test', docTest0[docTest0['Teks'].str.contains('([a-zA-Z]+)', regex=True)])
+#Case Fold
+docTesting = docTesting['Teks'].str.lower()
+print('\nCase Folding\n', docTesting)
+
+#Cleansing
+docTesting= docTesting.str.replace('[.()]','')
+print('\nCleansing\n', docTesting)
