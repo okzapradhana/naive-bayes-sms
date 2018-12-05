@@ -61,6 +61,8 @@ docTesting.to_csv("data_testing.csv")
 
 print('\nTesting Document', docTesting)
 
+docTestingLabel = docTesting['label']
+
 #Case Fold
 docTesting = docTesting['Teks'].str.lower()
 print('\nCase Folding\n', docTesting)
@@ -69,8 +71,16 @@ print('\nCase Folding\n', docTesting)
 docTesting = docTesting.str.replace('[.()]','')
 print('\nCleansing\n', docTesting)
 
+stemmingDocument = []
+
 #Stemming
 for i in range(getRows(docTesting)):
     stemmingResult = docTesting.iloc[i]
-    output   = stemmer.stem(stemmingResult)
-    print('\nStemming\n', output)
+    output   = pandas.DataFrame([stemmer.stem(stemmingResult)])
+    stemmingDocument.append(output)
+    print(stemmingDocument)
+
+print('Stemming result', len(stemmingDocument))
+
+
+#print('Concat', pandas.concat([docTesting, docTestingLabel], axis=1))
