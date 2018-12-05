@@ -1,5 +1,6 @@
 import numpy as np
 import pandas
+import re
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 
 #Stemmer
@@ -26,6 +27,14 @@ def getRowOfEveryClass(totalClass, document):
 
 def lowerCaseDocument(documentName):
     return documentName.str.lower()
+
+def remove_urls (vTEXT):
+    vTEXT = re.sub(r'((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)', '', vTEXT, flags=re.MULTILINE)
+    return(vTEXT)
+
+def remove_emot(vTEXT):
+    vTEXT = re.sub(r'[u"\U0001F600-\U0001F64F"u"\U0001F300-\U0001F5FF"]+', '', vTEXT, flags=re.MULTILINE)
+    return(vTEXT)
 
 #Read Document
 document = readDocument(documentName)
@@ -66,13 +75,33 @@ docTesting = docTesting['Teks'].str.lower()
 print('\nCase Folding\n', docTesting)
 
 #Cleansing
-docTesting = docTesting.str.replace('[.()]','')
+#simbol
+docTesting = docTesting.str.replace('[\\.()?,!""'':;/+=*#%\[\]]','')
+docTesting = docTesting.str.replace('[-_&]',' ')
+#number
+docTesting = docTesting.str.replace('\d','')
+#link/url
+docTesting = docTesting.str.replace('((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
+docTesting = docTesting.str.replace('\s+', ' ')
+
 print('\nCleansing\n', docTesting)
 
-#Tokenizing
-docTesting = docTesting.str.split()
-print('\nTokenizing\n', docTesting)
+regexTesting = [0] * len(docTesting)
 
+#for i in range(getRows(docTesting)):
+#    regexTesting[i] = remove_urls(docTesting.iloc[i])
+#    regexTesting[i] = remove_emot(regexTesting[i])
+    
+#docTesting = re.sub(r'((http(s)?://|(www?\.))[0-9a-z\./_+\(\)\$\#\&\!\?]+)', '', (docTesting.iloc[i] for i in range(getRows(docTesting))), flags=re.MULTILINE)
+
+#print('\nRegex\n', regexTesting)
+
+
+#Tokenizing
+#docTesting = docTesting.str.split()
+#print('\nTokenizing\n', docTesting)
+
+docTesting.to_csv("test_prep.csv")
 #Stemming
 #for i in range(getRows(docTesting)):
  #   stemmingResult = docTesting.iloc[i]
