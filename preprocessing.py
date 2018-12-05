@@ -2,10 +2,15 @@ import numpy as np
 import pandas
 import re
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 
 #Stemmer
 factory = StemmerFactory()
 stemmer = factory.create_stemmer()
+
+#Filter
+factory = StopWordRemoverFactory()
+stopword = factory.create_stop_word_remover()
 
 #Variable initialization
 documentName = 'dataset_sms_ori.csv'
@@ -83,10 +88,10 @@ docTesting = docTesting.str.replace('\d','')
 #link/url
 docTesting = docTesting.str.replace('((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
 docTesting = docTesting.str.replace('\s+', ' ')
+#emot
+docTesting = docTesting.str.replace('["\U0001F600-\U0001F64F" | "\U0001F300-\U0001F5FF"]+',' ')
 
 print('\nCleansing\n', docTesting)
-
-regexTesting = [0] * len(docTesting)
 
 #for i in range(getRows(docTesting)):
 #    regexTesting[i] = remove_urls(docTesting.iloc[i])
@@ -97,9 +102,12 @@ regexTesting = [0] * len(docTesting)
 #print('\nRegex\n', regexTesting)
 
 
-#Tokenizing
-#docTesting = docTesting.str.split()
-#print('\nTokenizing\n', docTesting)
+
+#Filtering
+for j in range(getRows(docTesting)):
+    filteringResult = docTesting.iloc[j]
+    output1 = stopword.remove(filteringResult)
+    print('\nFiltering\n', output1)
 
 docTesting.to_csv("test_prep.csv")
 #Stemming
@@ -107,3 +115,7 @@ docTesting.to_csv("test_prep.csv")
  #   stemmingResult = docTesting.iloc[i]
  #   output   = stemmer.stem(stemmingResult)
  #   print('\nStemming\n', output)
+
+#Tokenizing
+#docTesting = docTesting.str.split()
+#print('\nTokenizing\n', docTesting)
