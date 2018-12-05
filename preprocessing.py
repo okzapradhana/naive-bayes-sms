@@ -1,5 +1,6 @@
 import numpy as np
 import pandas
+import re
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 
@@ -14,6 +15,9 @@ stopword = factory.create_stop_word_remover()
 #Variable initialization
 documentName = 'dataset_sms_ori.csv'
 totalClass = np.zeros(3)
+filteringArray = []
+labelArray = []
+stemmingArray = []
 
 #Method for Document Parsing
 def readDocument(documentName):
@@ -28,6 +32,14 @@ def getRowOfEveryClass(totalClass, document):
     for i in range(len(totalClass)):
         totalClass[i] = getRows(document[document['label'] == i])
     return totalClass
+
+def remove_urls (vTEXT):
+    vTEXT = re.sub(r'((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)', '', vTEXT, flags=re.MULTILINE)
+    return(vTEXT)
+
+def remove_emot(vTEXT):
+    vTEXT = re.sub(r'[u"\U0001F600-\U0001F64F"u"\U0001F300-\U0001F5FF"]+', '', vTEXT, flags=re.MULTILINE)
+    return(vTEXT)
 
 #Read Document
 document = readDocument(documentName)
@@ -70,27 +82,59 @@ docTesting = docTesting['Teks'].str.lower()
 print('\nCase Folding\n', docTesting)
 
 #Cleansing
-docTesting = docTesting.str.replace('[.()]','')
+#simbol
+docTesting = docTesting.str.replace('[\\.()?,!""'':;/+=*#%\[\]]','')
+docTesting = docTesting.str.replace('[-_&]',' ')
+#number
+docTesting = docTesting.str.replace('\d','')
+#link/url
+docTesting = docTesting.str.replace('((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
+docTesting = docTesting.str.replace('\s+', ' ')
+#emot
+docTesting = docTesting.str.replace('["\U0001F600-\U0001F64F" | "\U0001F300-\U0001F5FF"]+',' ')
+
 print('\nCleansing\n', docTesting)
 
-#Filtering
-for j in range(getRows(docTesting)):
-    filteringResult = docTesting.iloc[j]
-    output1 = stopword.remove(filteringResult)
-    print('\nFiltering\n', output1)
+#for i in range(getRows(docTesting)):
+#    regexTesting[i] = remove_urls(docTesting.iloc[i])
+#    regexTesting[i] = remove_emot(regexTesting[i])
+    
+#docTesting = re.sub(r'((http(s)?://|(www?\.))[0-9a-z\./_+\(\)\$\#\&\!\?]+)', '', (docTesting.iloc[i] for i in range(getRows(docTesting))), flags=re.MULTILINE)
 
-#stemmingDocument = []
-#print('Stemming result', len(stemmingDocument))
+#print('\nRegex\n', regexTesting)
+
+#Filtering
+for i in range(getRows(docTesting)):
+    filteringResult = docTesting.iloc[i]
+    filteringArray.append(stopword.remove(filteringResult))
+
+for i in range(len(docTestingLabel)):
+    labelArray.append(docTestingLabel.iloc[i])
+
+docTesting.to_csv("test_prep.csv")
 
 #Stemming
 #for i in range(getRows(docTesting)):
-#    stemmingResult = docTesting.iloc[i]
-#    output   = stemmer.stem(stemmingResult)
-#    print('\nStemming\n', output)
+#    stemmingResult = filteringArray[i]
+#    stemmingArray.append(stemmer.stem(stemmingResult))
+
+#docStemmingTesting = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
+#labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
+
+#docStemmingTesting = pandas.concat([docStemmingTesting, labelDataFrame], axis=1)
+#print(docStemmingTesting)
+
+#docStemmingTesting.to_csv("test_stemming.csv")
+
+#Read Stemming Document
+stemmingDocument = readDocument('test_stemming.csv')
 
 #Tokenizing
-docTesting = docTesting.str.split()
+docTesting = stemmingDocument['Teks'].str.split()
 print('\nTokenizing\n', docTesting)
 
-#Merging with the Label Name
-print('Concat', pandas.concat([docTesting, docTestingLabel], axis=1))
+#Merge with the Label
+docTesting = pandas.concat([docTesting, stemmingDocument['label']], axis=1)
+print('\nDocument Testing\n', docTesting)
+
+docTesting.to_csv('preprocessing_document.csv')
