@@ -1,8 +1,10 @@
 import numpy as np
 import pandas
 import re
+from sklearn.feature_extraction.text import CountVectorizer
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
+
 
 #Stemmer
 factory = StemmerFactory()
@@ -24,13 +26,9 @@ def readDocument(documentName):
     df = pandas.read_csv(documentName)
     return df
 
-def getRows(partOfDocument):
-    count = partOfDocument.index
-    return len(count)
-
 def getRowOfEveryClass(totalClass, document):
     for i in range(len(totalClass)):
-        totalClass[i] = getRows(document[document['label'] == i])
+        totalClass[i] = len(document[document['label'] == i])
     return totalClass
 
 def remove_urls (vTEXT):
@@ -85,26 +83,21 @@ print('\nCase Folding\n', docTesting)
 #simbol
 docTesting = docTesting.str.replace('[\\.()?,!""'':;/+=*#%\[\]]','')
 docTesting = docTesting.str.replace('[-_&]',' ')
+
 #number
 docTesting = docTesting.str.replace('\d','')
+
 #link/url
 docTesting = docTesting.str.replace('((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
 docTesting = docTesting.str.replace('\s+', ' ')
+
 #emot
 docTesting = docTesting.str.replace('["\U0001F600-\U0001F64F" | "\U0001F300-\U0001F5FF"]+',' ')
 
 print('\nCleansing\n', docTesting)
 
-#for i in range(getRows(docTesting)):
-#    regexTesting[i] = remove_urls(docTesting.iloc[i])
-#    regexTesting[i] = remove_emot(regexTesting[i])
-    
-#docTesting = re.sub(r'((http(s)?://|(www?\.))[0-9a-z\./_+\(\)\$\#\&\!\?]+)', '', (docTesting.iloc[i] for i in range(getRows(docTesting))), flags=re.MULTILINE)
-
-#print('\nRegex\n', regexTesting)
-
 #Filtering
-for i in range(getRows(docTesting)):
+for i in range(len(docTesting)):
     filteringResult = docTesting.iloc[i]
     filteringArray.append(stopword.remove(filteringResult))
 
@@ -129,12 +122,17 @@ docTesting.to_csv("test_prep.csv")
 #Read Stemming Document
 stemmingDocument = readDocument('test_stemming.csv')
 
-#Tokenizing
-docTesting = stemmingDocument['Teks'].str.split()
-print('\nTokenizing\n', docTesting)
+#Tokenizing and Get Term
+stemmingResult = stemmingDocument['Teks']
+countVectorize = CountVectorizer()
+fitFeature = countVectorize.fit_transform(stemmingResult)
+getFeature = countVectorize.get_feature_names()
+arrayFeature = fitFeature.toarray()
+
+print(getFeature)
 
 #Merge with the Label
-docTesting = pandas.concat([docTesting, stemmingDocument['label']], axis=1)
-print('\nDocument Testing\n', docTesting)
+#docTesting = pandas.concat([docTesting, stemmingDocument['label']], axis=1)
+#print('\nDocument Testing\n', docTesting)
 
-docTesting.to_csv('preprocessing_document.csv')
+#docTesting.to_csv('preprocessing_document.csv')
