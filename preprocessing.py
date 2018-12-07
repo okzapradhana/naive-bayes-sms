@@ -52,13 +52,6 @@ def cleansing(document):
     document = document.str.replace('\s+', ' ')
     return document
 
-def filtering(docTraining):
-    filteringArray = []
-    for i in range(len(docTraining)):
-        filteringResult = docTraining.iloc[i]
-        filteringArray.append(stopword.remove(filteringResult))
-    return filteringArray
-
 def set_label(docLabel):
     labelArray = []
     for i in range(len(docLabel)):
@@ -67,7 +60,7 @@ def set_label(docLabel):
 
 def stemming(docTraining):
     for i in range(len(docTraining)):
-        stemmingResult = filtering(docTraining)[i]
+        stemmingResult = docTraining.iloc[i]
         stemmingArray.append(stemmer.stem(stemmingResult))
     return stemmingArray
 
@@ -104,7 +97,7 @@ docTraining2 = docClass2[ : (int(getRowOfEveryClass(totalClass, document)[2] * 0
 docTraining = pandas.concat([docTraining2, docTraining1, docTraining0])
 docTraining.to_csv("data_training.csv")
 
-#print('\nTraining Document', docTraining)
+print('\nTraining Document', docTraining)
 
 #Data Testing Document
 docTesting = pandas.concat([docTest2, docTest1, docTest0])
@@ -115,28 +108,28 @@ docTesting.to_csv("data_testing.csv")
 
 
 #Preprocessing Document Training
-docTrainingLabel = docTraining['label']
-labelArray = set_label(docTrainingLabel)
-
-stemmingArray = preprocessing(docTraining)
-
-docStemmingTraining = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
-labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
-
-docStemmingTraining = pandas.concat([docStemmingTraining, labelDataFrame], axis=1)
+# docTrainingLabel = docTraining['label']
+# labelArray = set_label(docTrainingLabel)
+#
+# stemmingArray = preprocessing(docTraining)
+#
+# docStemmingTraining = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
+# labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
+#
+# docStemmingTraining = pandas.concat([docStemmingTraining, labelDataFrame], axis=1)
 #docStemmingTraining.to_csv('training_stemming.csv')
 
 #Read Stemming Document
 stemmingDocument = readDocument('training_stemming.csv')
 
 #Tokenizing and Get Term
-docTraining = stemmingDocument['Teks'].str.split()
 stemmingResult = stemmingDocument['Teks']
-countVectorize = CountVectorizer()
+stopword = StopWordRemoverFactory().get_stop_words()
+countVectorize = CountVectorizer(stop_words=stopword)
 fitFeature = countVectorize.fit_transform(stemmingResult)
 getFeature = countVectorize.get_feature_names()
 arrayFeature = fitFeature.toarray()
-#print(getFeature)
+print(getFeature)
 
 #Merge with the Label
 #docTraining = pandas.concat([docTraining, stemmingDocument['label']], axis=1)
@@ -145,14 +138,14 @@ arrayFeature = fitFeature.toarray()
 #docTraining.to_csv('preprocessing_document.csv')
 
 #Preprocessing Data Testing
-stemmingArray = []
-docTestingLabel = docTesting['label']
-labelArray = set_label(docTestingLabel)
-
-stemmingArray = preprocessing(docTesting)
-
-docStemmingTesting = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
-labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
-
-docStemmingTesting = pandas.concat([docStemmingTesting, labelDataFrame], axis=1)
-docStemmingTesting.to_csv('testing_stemming.csv')
+# stemmingArray = []
+# docTestingLabel = docTesting['label']
+# labelArray = set_label(docTestingLabel)
+#
+# stemmingArray = preprocessing(docTesting)
+#
+# docStemmingTesting = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
+# labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
+#
+# docStemmingTesting = pandas.concat([docStemmingTesting, labelDataFrame], axis=1)
+# docStemmingTesting.to_csv('testing_stemming.csv')
