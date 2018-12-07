@@ -28,28 +28,22 @@ def getRowOfEveryClass(totalClass, document):
         totalClass[i] = len(document[document['label'] == i])
     return totalClass
 
-def remove_urls (vTEXT):
-    vTEXT = re.sub(r'((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)', '', vTEXT, flags=re.MULTILINE)
-    return(vTEXT)
-
-def remove_emot(vTEXT):
-    vTEXT = re.sub(r'[u"\U0001F600-\U0001F64F"u"\U0001F300-\U0001F5FF"]+', '', vTEXT, flags=re.MULTILINE)
-    return(vTEXT)
-
 def case_folding(document):
     document = document['Teks'].str.lower()
     return document
 
 def cleansing(document):
-    #simbol
-    document = document.str.replace('[\\.()?,!""'':;/+=*#%\[\]]','')
-    document = document.str.replace('[-_&]',' ')
-
     #number
     document = document.str.replace('\d','')
 
     #link/url
-    document = document.str.replace('((http(s)?://|(www?))[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
+    document = document.str.replace('((http(s)?)[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
+    document = document.str.replace('((www?)[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
+    document = document.str.replace('((tsel?\.)[0-9a-z\./_+\(\)\$\#\&\!\?]+)','')
+
+    #simbol
+    document = document.str.replace('[\\.()?,!""'':;/+=*#%\[\]]','')
+    document = document.str.replace('[-_&]',' ')
 
     #emot
     document = document.str.replace('["\U0001F600-\U0001F64F" | "\U0001F300-\U0001F5FF"]+',' ')
@@ -77,7 +71,13 @@ def stemming(docTraining):
         stemmingArray.append(stemmer.stem(stemmingResult))
     return stemmingArray
 
-
+def preprocessing(document):
+    prepArray = []
+    document = case_folding(document)
+    document = cleansing(document)
+    prepArray = stemming(document)
+    return prepArray
+    
 #Read Document
 document = readDocument(documentName)
 
@@ -112,30 +112,19 @@ docTesting.to_csv("data_testing.csv")
 
 #print('\nTesting Document', docTesting)
 
-docTrainingLabel = docTraining['label']
+
 
 #Preprocessing Document Training
-
-#Case Fold
-docTraining = case_folding(docTraining)
-#print('\nCase Folding\n', docTraining)
-
-#Cleansing
-docTraining = cleansing(docTraining)
-#print('\nCleansing\n', docTraining)
-
-#Filtering
-filteringArray = filtering(docTraining)
+docTrainingLabel = docTraining['label']
 labelArray = set_label(docTrainingLabel)
 
-#Stemming
-'''stemmingArray = stemming(docTraining)
+stemmingArray = preprocessing(docTraining)
 
 docStemmingTraining = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
 labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
 
 docStemmingTraining = pandas.concat([docStemmingTraining, labelDataFrame], axis=1)
-docStemmingTraining.to_csv('training_stemming.csv')'''
+#docStemmingTraining.to_csv('training_stemming.csv')
 
 #Read Stemming Document
 stemmingDocument = readDocument('training_stemming.csv')
@@ -155,3 +144,15 @@ arrayFeature = fitFeature.toarray()
 
 #docTraining.to_csv('preprocessing_document.csv')
 
+#Preprocessing Data Testing
+stemmingArray = []
+docTestingLabel = docTesting['label']
+labelArray = set_label(docTestingLabel)
+
+stemmingArray = preprocessing(docTesting)
+
+docStemmingTesting = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
+labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
+
+docStemmingTesting = pandas.concat([docStemmingTesting, labelDataFrame], axis=1)
+docStemmingTesting.to_csv('testing_stemming.csv')
