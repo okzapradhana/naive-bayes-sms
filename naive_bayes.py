@@ -37,7 +37,6 @@ def countTotalTFperClass(data):
         sum += data[i][1]
     return sum
 
-#Count(w,c)
 def countTotalTermPerClass(data, smsTest):
     temp = []
     splitSMS = smsTest.split(" ")
@@ -59,6 +58,7 @@ def probability(label):
     prob = (len(pre.docTraining[pre.docTraining['label'] == label])) / totalSMS
     return prob
 
+#get count(w, c) => word per class
 def getCountWC(label, sms):
     return countTotalTermPerClass(rawTF(pre.stemmingDocument, label), sms)
 
