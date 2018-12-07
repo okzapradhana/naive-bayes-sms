@@ -82,7 +82,7 @@ def stemming(docTraining):
 document = readDocument(documentName)
 
 #Print Total Rows for Every class
-print('Total row every class ' , getRowOfEveryClass(totalClass, document))
+#print('Total row every class ' , getRowOfEveryClass(totalClass, document))
 
 #Filter Based on Document Label
 docClass0 = document[document['label'] == 0]
@@ -104,13 +104,13 @@ docTraining2 = docClass2[ : (int(getRowOfEveryClass(totalClass, document)[2] * 0
 docTraining = pandas.concat([docTraining2, docTraining1, docTraining0])
 docTraining.to_csv("data_training.csv")
 
-print('\nTraining Document', docTraining)
+#print('\nTraining Document', docTraining)
 
 #Data Testing Document
 docTesting = pandas.concat([docTest2, docTest1, docTest0])
 docTesting.to_csv("data_testing.csv")
 
-print('\nTesting Document', docTesting)
+#print('\nTesting Document', docTesting)
 
 docTrainingLabel = docTraining['label']
 
@@ -118,24 +118,24 @@ docTrainingLabel = docTraining['label']
 
 #Case Fold
 docTraining = case_folding(docTraining)
-print('\nCase Folding\n', docTraining)
+#print('\nCase Folding\n', docTraining)
 
 #Cleansing
 docTraining = cleansing(docTraining)
-print('\nCleansing\n', docTraining)
+#print('\nCleansing\n', docTraining)
 
 #Filtering
 filteringArray = filtering(docTraining)
 labelArray = set_label(docTrainingLabel)
 
 #Stemming
-stemmingArray = stemming(docTraining)
+'''stemmingArray = stemming(docTraining)
 
 docStemmingTraining = pandas.DataFrame(data=stemmingArray, columns=['Teks'])
 labelDataFrame = pandas.DataFrame(data=labelArray, columns=['label'])
 
 docStemmingTraining = pandas.concat([docStemmingTraining, labelDataFrame], axis=1)
-docStemmingTraining.to_csv('training_stemming.csv')
+docStemmingTraining.to_csv('training_stemming.csv')'''
 
 #Read Stemming Document
 stemmingDocument = readDocument('training_stemming.csv')
@@ -147,10 +147,11 @@ countVectorize = CountVectorizer()
 fitFeature = countVectorize.fit_transform(stemmingResult)
 getFeature = countVectorize.get_feature_names()
 arrayFeature = fitFeature.toarray()
-print(getFeature)
+#print(getFeature)
 
 #Merge with the Label
 #docTraining = pandas.concat([docTraining, stemmingDocument['label']], axis=1)
 #print('\nDocument Testing\n', docTraining)
 
 #docTraining.to_csv('preprocessing_document.csv')
+
