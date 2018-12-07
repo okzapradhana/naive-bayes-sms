@@ -2,6 +2,7 @@
 
 import numpy as np
 import preprocessing as pre
+import pandas
 from sklearn.feature_extraction.text import CountVectorizer
 
 def rawTF(trainingDocument, number):
@@ -27,4 +28,5 @@ def rawTF(trainingDocument, number):
         temp.append((getFeature[i], sum))
     return temp
 
-print(rawTF(pre.stemmingDocument, 1))
+doc = pandas.read_csv('training_stemming.csv')
+print(rawTF(doc, 1))
