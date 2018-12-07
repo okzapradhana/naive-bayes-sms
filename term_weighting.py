@@ -1,13 +1,30 @@
 #Will be executed after Preprocessing
-#Formula: Wt,d = log(1+ tf,d)*log10(N/dft)
 
 import numpy as np
 import preprocessing as pre
+from sklearn.feature_extraction.text import CountVectorizer
 
-N = np.zeros(3)
+def rawTF(trainingDocument, number):
 
-N[0] = pre.getRows(pre.docTest0)
-N[1] = pre.getRows(pre.docTest1)
-N[2] = pre.getRows(pre.docTest2)
+    sum = 0
+    temp = []
 
-print(N)
+    countVectorize = CountVectorizer()
+
+    countVectorize.fit_transform(trainingDocument['Teks'])
+
+    getLabel = trainingDocument[trainingDocument['label'] == number]['Teks']
+
+    fitFeatureStemming = countVectorize.transform(getLabel)
+
+    getFeature = countVectorize.get_feature_names()
+
+    arrayLabel = np.transpose(fitFeatureStemming.toarray())
+
+    for i in range(len(getFeature)):
+        for j in range(len(arrayLabel[number])):
+            sum += arrayLabel[i].item(j)
+        temp.append((getFeature[i], sum))
+    return temp
+
+print(rawTF(pre.stemmingDocument, 1))
